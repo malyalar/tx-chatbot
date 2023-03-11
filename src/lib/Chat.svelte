@@ -90,6 +90,8 @@
     }
   });
 
+
+
   // Scroll to the bottom of the chat on update
   afterUpdate(() => {
     // Scroll to the bottom of the page after any updates to the messages array
@@ -105,28 +107,11 @@
 
   const sendRequest = async (messages: Message[]): Promise<Response> => {
     // Send API request
-    /*
-    // Not working yet: a way to get the response as a stream
-    await fetchEventSource("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization:
-          `Bearer ${$apiKeyStorage}`,
-        "Content-Type": "text/event-stream",
-      },
-      body: JSON.stringify(request),
-      onmessage(ev) {
-        console.log(ev);
-      },
-      onerror(err) {
-        throw err;
-      },
-    });
-    */
     // Show updating bar
     updating = true;
 
     let response: Response;
+
     try {
       const request: Request = {
         model: "gpt-3.5-turbo",
@@ -148,6 +133,7 @@
           return acc;
         }, {}),
       };
+
       response = await (
         await fetch("https://api.openai.com/v1/chat/completions", {
           method: "POST",
@@ -169,10 +155,12 @@
   };
 
   const submitForm = async (recorded: boolean = false): Promise<void> => {
+
     // Compose the input message
     const inputMessage: Message = { role: "user", content: input.value };
     addMessage(chatId, inputMessage);
 
+    
     // Clear the input value
     input.value = "";
     input.blur();

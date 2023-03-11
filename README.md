@@ -10,7 +10,7 @@ Transplant Chatbot is a patient education tool that is targeted towards providin
 
 ## Why?
 
-Why not use the [official ChatGPT interface](https://chat.openai.com/)? Becauce ChatGPT-web will allow more customization, and since it uses the commercial OpenAI API it should be more reliable. It's also *much* cheaper than ChatGPT Plus - at $20 per month, you would need to use *10 million* tokens on the OpenAI API for this to break even. Finally, since ChatGPT-web is open source, so you can host it yourself and make changes as you want.
+Why not use the [official ChatGPT interface](https://chat.openai.com/)? Transplant Chatbot allows for responses that are more tailored to your domain and practice setting, while still using the reliable natural language processing of OpenAI's ChatGPT. Transplant Chatbot, which is a modified fork of https://github.com/Niek/chatgpt-web, is also itself open-source and extensible.
 
 ## Development
 
