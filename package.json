@@ -1,12 +1,12 @@
 {
-  "name": "chatgpt-web",
+  "name": "tx-chatbot",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:github": "vite build --base=/chatgpt-web/",
+    "build:github": "vite build --base=/tx-chatbot/",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json"
   },
