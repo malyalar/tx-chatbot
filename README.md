@@ -1,12 +1,12 @@
 # ChatGPT-web
 
-## **URL**: https://niek.github.io/chatgpt-web/
+## **URL**: https://malyalar.github.io/tx-chatbot/
 
 ![Screenshot of ChatGPT-web](.github/screenshot.png)
 
 [![All Contributors](https://img.shields.io/github/all-contributors/Niek/chatgpt-web?color=ee8449&style=flat-square)](#contributors)
 
-ChatGPT-web is a simple one-page web interface to the OpenAI ChatGPT API. To use it, you need to register for [an OpenAI API key](https://platform.openai.com/account/api-keys) first. All messages are stored in your browser's local storage, so everything is **private**. You can also close the browser tab and come back later to continue the conversation.
+Transplant Chatbot is a patient education tool that is targeted towards providing, accurate, location-specific advice and counseling for prospective transplant donors or recipients. It is primed with information in advance by physicians and other providers. The chatbot uses the OpenAI ChatGPT API, and so it use it, you will need to register for [an OpenAI API key](https://platform.openai.com/account/api-keys). All messages are stored in your browser's local storage, but the data submitted to OpenAI's API can be stored and used in the future for other activities, such as training on the next iterations of GPT models. As a result, we would not recommend discussing confidential patient matters in this iteration of the chatbot. You can also close the browser tab and come back later to continue the conversation.
 
 ## Why?
 
