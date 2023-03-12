@@ -271,7 +271,7 @@ const cosineSimilarity = {
   export const submitConcourse = async (inputMessage: string): Promise<string[]> => {
     return new Promise((resolve, reject) => {
         // Read the facts file
-        fetch('/src/lib/textAssets/facts.txt')
+        fetch('https://raw.githubusercontent.com/malyalar/tx-chatbot/main/src/lib/textAssets/facts.txt')
         .then(response => response.text())
         .then(async (factsText) => { // use async/await to call cleanText() function
 
