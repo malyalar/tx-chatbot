@@ -266,99 +266,7 @@ const cosineSimilarity = {
 // -------------------------------------------------------------------------------------------
 
 
-  // Define the function to clean the input text
 
-  async function loadStopwords() {
-      const stopwordNumbersUrl = '/src/lib/textAssets/stopword_numbers.txt';
-      const stopwordNumbersResponse = await fetch(stopwordNumbersUrl);
-      const stopwordNumbersText = await stopwordNumbersResponse.text();
-      const stopwordNumbers = stopwordNumbersText.replace(/\r/g, '').split('\n');
-
-      // Repeat for stopword_symbols.txt 
-      const stopwordSymbolsUrl = '/src/lib/textAssets/stopword_symbols.txt';
-      const stopwordSymbolsResponse = await fetch(stopwordSymbolsUrl);
-      const stopwordSymbolsText = await stopwordSymbolsResponse.text();
-      const stopwordSymbols = stopwordSymbolsText.replace(/\r/g, '').split('\n');
-
-      // Repeat for stopword_min3.txt
-      const stopwordMin3Url = '/src/lib/textAssets/stopword_min3.txt';
-      const stopwordMin3Response = await fetch(stopwordMin3Url);
-      const stopwordMin3Text = await stopwordMin3Response.text();
-      const stopwordMin3 = stopwordMin3Text.replace(/\r/g, '').split('\n');
-
-      console.log(stopwordNumbers);
-      console.log(stopwordSymbols);
-      console.log(stopwordMin3);
-
-      return {
-        stopwordNumbers,
-        stopwordSymbols,
-        stopwordMin3,
-      };
-    }
-
-  async function cleanText(txtin: string): Promise<string> {
-      // Remove contractions
-      /*
-      txtin = txtin.replace(/\'m/g,' am')
-      txtin = txtin.replace(/\'re/g,' are')
-      txtin = txtin.replace(/\blet\'s\b/g,'let us')
-      txtin = txtin.replace(/\'s/g,' is')
-      txtin = txtin.replace(/ain\'t/g,' is not it')
-      txtin = txtin.replace(/n\'t/g,' not')
-      txtin = txtin.replace(/\'ll/g,' will')
-      txtin = txtin.replace(/\'d/g,' would')
-      txtin = txtin.replace(/\'ve/g,' have')
-      txtin = txtin.replace(/\lemme/g,' let me')
-      txtin = txtin.replace(/\gimme/g,' give me')
-      txtin = txtin.replace(/\wanna/g,' want to')
-      txtin = txtin.replace(/\gonna/g,' going to')
-      txtin = txtin.replace(/r u /g,'are you')
-      txtin = txtin.replace(/\bim\b/g,'i am')
-      txtin = txtin.replace(/\bwhats\b/g,'what is')
-      txtin = txtin.replace(/\bwheres\b/g,'where is')
-      txtin = txtin.replace(/\bwhos\b/g,'who is')
-    */
-
-    // Load the stopwords
-    const stopwords = await loadStopwords();
-    const stopwordNumbers = stopwords.stopwordNumbers;
-    const stopwordSymbols = stopwords.stopwordSymbols;
-    const stopwordMin3 = stopwords.stopwordMin3;
-
-    // Remove numbers
-    for (let i = 0; i < stopwordNumbers.length; i++) {
-        const re = new RegExp(`\\b${stopwordNumbers[i]}\\b`, 'g');
-        txtin = txtin.replace(re, '');
-        txtin = txtin.replace(/[0-9]/g, ' ').replace(/ \. /g, ' ');
-      }
-
-      // Remove words (very long list!)
-      for (let i = 0; i < stopwordMin3.length; i++) {
-        const re = new RegExp(`\\b${stopwordMin3[i]}\\b`, 'g');
-        txtin = txtin.replace(re, '');
-      }
-
-      // Remove symbols
-      for (let i = 0; i < stopwordSymbols.length; i++) {
-        const re = new RegExp(`\\${stopwordSymbols[i]}`, 'g');
-        txtin = txtin.replace(re, '');
-      }
-                                      
-      //console.log(txtin.trim().toLowerCase());                                                      // log statement
-      return txtin.trim().toLowerCase();
-  }
-
-/*
-  const getFactsFromFile = async (filePath: string): Promise<Fact[]> => {
-      const response = await fetch(filePath);
-      const text = await response.text();
-      const facts = text.split("\n").map((fact) => ({ fact }));
-
-      console.log("List of all facts: " +facts);                                                   // log statement
-      return facts;
-     };
-*/
 
   export const submitConcourse = async (inputMessage: string): Promise<string[]> => {
     return new Promise((resolve, reject) => {
@@ -368,7 +276,7 @@ const cosineSimilarity = {
         .then(async (factsText) => { // use async/await to call cleanText() function
 
           // Clean up the input message
-          const cleanedSentence = await cleanText(inputMessage);
+          //const cleanedSentence = await cleanText(inputMessage);
 
           // Split the text into facts
           const facts = factsText.split('\n').filter(fact => fact.trim() !== '');
