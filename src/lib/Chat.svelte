@@ -299,6 +299,7 @@ const cosineSimilarity = {
 
   async function cleanText(txtin: string): Promise<string> {
       // Remove contractions
+      /*
       txtin = txtin.replace(/\'m/g,' am')
       txtin = txtin.replace(/\'re/g,' are')
       txtin = txtin.replace(/\blet\'s\b/g,'let us')
@@ -317,6 +318,7 @@ const cosineSimilarity = {
       txtin = txtin.replace(/\bwhats\b/g,'what is')
       txtin = txtin.replace(/\bwheres\b/g,'where is')
       txtin = txtin.replace(/\bwhos\b/g,'who is')
+    */
 
     // Load the stopwords
     const stopwords = await loadStopwords();
@@ -374,7 +376,7 @@ const cosineSimilarity = {
 
           // Compute the similarity between the cleaned sentence and each fact using cosine similarity
           const similarityScores: SimilarityScore[] = facts.map((fact) => {
-            const factScore = cosineSimilarity.calculateSimilarity(cleanedSentence, fact.trim().toLowerCase()); // use cosineSimilarity() instead of similarity()
+            const factScore = cosineSimilarity.calculateSimilarity(inputMessage, fact.trim().toLowerCase()); // use cosineSimilarity() instead of similarity()      // ALSO NOTE: you took out cleanedSentence and replaced it with inputMessage
             console.log(fact, factScore);                                            // log statement
             return { fact, score: factScore };
           });
@@ -426,7 +428,7 @@ const cosineSimilarity = {
     // Compose the input message
     const inputMessage: Message = { role: "user", content: input.value };
     addMessage(chatId, inputMessage);
-    console.log(input.value);                                                       // log statement
+    //console.log(input.value);                                                       // log statement
     
     // Clear the input value
     input.value = "";
