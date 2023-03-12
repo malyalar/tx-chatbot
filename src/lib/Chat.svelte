@@ -8,6 +8,8 @@
   import { afterUpdate, onMount } from "svelte";
   import SvelteMarkdown from "svelte-markdown";
 
+  //import { similarity } from 'string-cosine-similarity';
+
   export let chatId: number;
   let updating: boolean = false;
 
@@ -15,6 +17,14 @@
   let settings: HTMLDivElement;
   let recognition: any = null;
   let recording = false;
+
+  // -------------------------------------
+  // Define the interface for the facts
+  interface Fact { fact: string; }
+
+  // Define the interface for the similarity score
+  interface SimilarityScore {fact: string; score: number;}
+// -------------------------------------
 
   const settingsMap: Settings[] = [
     {
@@ -154,12 +164,269 @@
     return response;
   };
 
+
+
+// -------------------------------------------------------------------------------------------
+// ----------------------------STRING COSINE SIMILARITY CALCULATION --------------------------
+// -------------------------------------------------------------------------------------------
+
+
+// tokenize function
+const tokenize = (text) => {
+    return text.split(/[^A-Za-z0-9]+/);
+  };
+
+// cosineLib module
+const cosineLib = {
+    // Convert strings into arrays (Tokenize, toLowerCase) //
+    getTokens(str) {
+      return tokenize(str)
+        .map((word) => word.toLowerCase());
+    },
+
+    // Find Common words Frequency //
+    computeFrequency(arr, commons) {
+      return commons.map((word) =>
+        arr.reduce((f, element) => (element === word ? f + 1 : f), 0)
+      );
+    },
+
+    // Calculate Vector A.B //
+    computeVectorAB(v1, v2) {
+      return v1.reduce((sum, f, index) => sum + f * v2[index], 0);
+    },
+
+    // Calculate ||a|| and ||b|| //
+    absVector(v) {
+      return Math.sqrt(v.reduce((sum, f) => sum + f * f, 0));
+    },
+
+    // Cosine Similarity //
+    similarity(vAB, a, b) {
+      return vAB / (a * b);
+    },
+  };
+
+// cosineSimilarity module
+const cosineSimilarity = {
+    calculateSimilarity(string1, string2) {
+      
+      //console.log("testing new pair");                                            // log statement
+      //console.log("comparison string 1: ", string1);                                            // log statement
+      //console.log("comparison string 2: ", string2);                                            // log statement
+      
+      const arr1 = cosineLib.getTokens(string1);
+      const arr2 = cosineLib.getTokens(string2);
+
+      //console.log("tokenized string 1: ", arr1);                                            // log statement
+      //console.log("tokenized string 2: ", arr2);                                            // log statement
+
+      // Define Commons Array //
+      const commons = arr1;
+
+      // Word Frequency as Vectors //
+      const v1 = cosineLib.computeFrequency(arr1, commons);
+      const v2 = cosineLib.computeFrequency(arr2, commons);
+
+      //console.log("wordfreqasvector string 1: ", v1);                                            // log statement
+      //console.log("wordfreqasvector string 2: ", v2);                                            // log statement
+
+      // Calculate Vector A.B //
+      const vAB = cosineLib.computeVectorAB(v1, v2);
+
+      //console.log("dot product string 1.2: ", vAB);                                            // log statement
+
+      // Abs Vector A and B //
+      const a = cosineLib.absVector(v1);
+      const b = cosineLib.absVector(v2);
+
+      //console.log("abs vector string 1: ", a);                                            // log statement
+      //console.log("abs vector string 2: ", b);                                            // log statement
+
+      // Cosine Similarity //
+      const similarity = cosineLib.similarity(vAB, a, b);
+      //console.log("similarity: ", vAB);                                                   // log statement
+
+      // Check if the denominator is 0
+      if (a === 0 || b === 0) {
+        return 0;
+      }
+
+      return similarity;
+    },
+  };
+
+
+
+
+
+
+// -------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------
+
+
+  // Define the function to clean the input text
+
+  async function loadStopwords() {
+      const stopwordNumbersUrl = '/src/lib/textAssets/stopword_numbers.txt';
+      const stopwordNumbersResponse = await fetch(stopwordNumbersUrl);
+      const stopwordNumbersText = await stopwordNumbersResponse.text();
+      const stopwordNumbers = stopwordNumbersText.replace(/\r/g, '').split('\n');
+
+      // Repeat for stopword_symbols.txt 
+      const stopwordSymbolsUrl = '/src/lib/textAssets/stopword_symbols.txt';
+      const stopwordSymbolsResponse = await fetch(stopwordSymbolsUrl);
+      const stopwordSymbolsText = await stopwordSymbolsResponse.text();
+      const stopwordSymbols = stopwordSymbolsText.replace(/\r/g, '').split('\n');
+
+      // Repeat for stopword_min3.txt
+      const stopwordMin3Url = '/src/lib/textAssets/stopword_min3.txt';
+      const stopwordMin3Response = await fetch(stopwordMin3Url);
+      const stopwordMin3Text = await stopwordMin3Response.text();
+      const stopwordMin3 = stopwordMin3Text.replace(/\r/g, '').split('\n');
+
+      console.log(stopwordNumbers);
+      console.log(stopwordSymbols);
+      console.log(stopwordMin3);
+
+      return {
+        stopwordNumbers,
+        stopwordSymbols,
+        stopwordMin3,
+      };
+    }
+
+  async function cleanText(txtin: string): Promise<string> {
+      // Remove contractions
+      txtin = txtin.replace(/\'m/g,' am')
+      txtin = txtin.replace(/\'re/g,' are')
+      txtin = txtin.replace(/\blet\'s\b/g,'let us')
+      txtin = txtin.replace(/\'s/g,' is')
+      txtin = txtin.replace(/ain\'t/g,' is not it')
+      txtin = txtin.replace(/n\'t/g,' not')
+      txtin = txtin.replace(/\'ll/g,' will')
+      txtin = txtin.replace(/\'d/g,' would')
+      txtin = txtin.replace(/\'ve/g,' have')
+      txtin = txtin.replace(/\lemme/g,' let me')
+      txtin = txtin.replace(/\gimme/g,' give me')
+      txtin = txtin.replace(/\wanna/g,' want to')
+      txtin = txtin.replace(/\gonna/g,' going to')
+      txtin = txtin.replace(/r u /g,'are you')
+      txtin = txtin.replace(/\bim\b/g,'i am')
+      txtin = txtin.replace(/\bwhats\b/g,'what is')
+      txtin = txtin.replace(/\bwheres\b/g,'where is')
+      txtin = txtin.replace(/\bwhos\b/g,'who is')
+
+    // Load the stopwords
+    const stopwords = await loadStopwords();
+    const stopwordNumbers = stopwords.stopwordNumbers;
+    const stopwordSymbols = stopwords.stopwordSymbols;
+    const stopwordMin3 = stopwords.stopwordMin3;
+
+    // Remove numbers
+    for (let i = 0; i < stopwordNumbers.length; i++) {
+        const re = new RegExp(`\\b${stopwordNumbers[i]}\\b`, 'g');
+        txtin = txtin.replace(re, '');
+        txtin = txtin.replace(/[0-9]/g, ' ').replace(/ \. /g, ' ');
+      }
+
+      // Remove words (very long list!)
+      for (let i = 0; i < stopwordMin3.length; i++) {
+        const re = new RegExp(`\\b${stopwordMin3[i]}\\b`, 'g');
+        txtin = txtin.replace(re, '');
+      }
+
+      // Remove symbols
+      for (let i = 0; i < stopwordSymbols.length; i++) {
+        const re = new RegExp(`\\${stopwordSymbols[i]}`, 'g');
+        txtin = txtin.replace(re, '');
+      }
+                                      
+      //console.log(txtin.trim().toLowerCase());                                                      // log statement
+      return txtin.trim().toLowerCase();
+  }
+
+/*
+  const getFactsFromFile = async (filePath: string): Promise<Fact[]> => {
+      const response = await fetch(filePath);
+      const text = await response.text();
+      const facts = text.split("\n").map((fact) => ({ fact }));
+
+      console.log("List of all facts: " +facts);                                                   // log statement
+      return facts;
+     };
+*/
+
+  export const submitConcourse = async (inputMessage: string): Promise<string[]> => {
+    return new Promise((resolve, reject) => {
+        // Read the facts file
+        fetch('/src/lib/textAssets/facts.txt')
+        .then(response => response.text())
+        .then(async (factsText) => { // use async/await to call cleanText() function
+
+          // Clean up the input message
+          const cleanedSentence = await cleanText(inputMessage);
+
+          // Split the text into facts
+          const facts = factsText.split('\n').filter(fact => fact.trim() !== '');
+          //console.log("List of all facts: " + facts);                                            // log statement
+
+          // Compute the similarity between the cleaned sentence and each fact using cosine similarity
+          const similarityScores: SimilarityScore[] = facts.map((fact) => {
+            const factScore = cosineSimilarity.calculateSimilarity(cleanedSentence, fact.trim().toLowerCase()); // use cosineSimilarity() instead of similarity()
+            console.log(fact, factScore);                                            // log statement
+            return { fact, score: factScore };
+          });
+
+          // Sort the similarity scores in descending order based on the score
+          similarityScores.sort((a, b) => b.score - a.score);
+
+          // Pick the top 3 most relevant facts
+          const numFactsToReturn = 3;
+          const topFacts = similarityScores
+            .slice(0, numFactsToReturn)
+            .map((score) => score.fact);
+
+          console.log("List of top facts: " + topFacts);                                            // log statement
+          resolve(topFacts);
+        })
+        .catch(error => reject(error));
+    });
+  };
+
+  // -------------------------------------------------------------------------------------------
+  // -------------------------------------------------------------------------------------------
+  // -------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
   const submitForm = async (recorded: boolean = false): Promise<void> => {
+
+    // reminder header message, as system messages are under-emphasized in the current model
+    //const headerMessage: Message = { role: "system", content: "You are a chatbot for talking about kidney transplant only.\
+    //                                                          Decline requests to talk about other domains. Here are some facts about kidney transplant:"};
+    //addMessage(chatId, headerMessage);
+    
+    // Call submitConcourse function and await its result
+    const facts = await submitConcourse(input.value);
+    // Convert the facts to a string of concatenated facts
+    const concatenatedFacts = facts.join("\n");
+    console.log(concatenatedFacts);                                                 // log statement
+    const primerMessage: Message = { role: "system", content: concatenatedFacts};
+    addMessage(chatId, primerMessage);
 
     // Compose the input message
     const inputMessage: Message = { role: "user", content: input.value };
     addMessage(chatId, inputMessage);
-
+    console.log(input.value);                                                       // log statement
     
     // Clear the input value
     input.value = "";
