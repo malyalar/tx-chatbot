@@ -1,9 +1,30 @@
 {
-  "projectName": "chatgpt-web",
-  "projectOwner": "Niek",
+  "projectName": "tx-chatbot",
+  "projectOwner": "Rohit",
   "repoType": "github",
   "commit": false,
   "contributors": [
+
+    {
+      "login": "Niek",
+      "name": "Niek van der Maas",
+      "avatar_url": "https://avatars.githubusercontent.com/u/213140?v=4",
+      "profile": "https://github.com/Niek",
+      "contributions": [
+        "ideas",
+        "code"
+      ]
+    }
+    {
+      "login": "malyalar",
+      "name": "Rohit Malyala",
+      "avatar_url": "https://avatars.githubusercontent.com/u/38365101?v=4",
+      "profile": "https://github.com/malyalar",
+      "contributions": [
+        "ideas",
+        "code"
+      ]
+    }
     {
       "login": "Michael-Tanzer",
       "name": "Michael Tanzer",
