@@ -501,18 +501,18 @@ const cosineSimilarity = {
         />
       </div>
     </article>
-  {:else if message.role === "system" || message.role === "error"}
-    <article class="message is-danger">
-      <div class="message-body content">
-        <SvelteMarkdown
-          source={message.content}
-          options={markedownOptions}
-          renderers={{
-            code: Code,
-          }}
-        />
-      </div>
-    </article>
+  {:else if message.role === "system" || message.role === "error"}   
+  <!--<article class="message is-danger">
+    <div class="message-body content">
+      <SvelteMarkdown
+        source={message.content}
+        options={markedownOptions}
+        renderers={{
+          code: Code,
+        }}
+      />
+    </div>
+  </article>-->
   {:else}
     <article class="message is-success">
       <div class="message-body content">
