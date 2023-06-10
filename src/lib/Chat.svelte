@@ -298,7 +298,7 @@ const cosineSimilarity = {
             .slice(0, numFactsToReturn)
             .map((score) => score.fact);
 
-          console.log("List of top facts: " + topFacts);                                            // log statement
+          //console.log("List of top facts: " + topFacts);                                            // log statement
           resolve(topFacts);
         })
         .catch(error => reject(error));
